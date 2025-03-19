@@ -9,21 +9,18 @@ function App() {
   const [nextNumber, setNextNumber] = useState(null);
   const [level, setLevel] = useState(1);
   const [highScore, setHighScore] = useState(localStorage.getItem('highScore') || 0);
-  const [timeLeft, setTimeLeft] = useState(10); // 10 giây cho mỗi lựa chọn
+  const [timeLeft, setTimeLeft] = useState(10);
 
-  // Tạo số ngẫu nhiên từ 1-1000
   const generateRandomNumber = () => {
     return Math.floor(Math.random() * 1000) + 1;
   };
 
-  // Khởi tạo số đầu tiên và đếm ngược
   useEffect(() => {
     if (gameState === 'initial') {
       setCurrentNumber(generateRandomNumber());
     }
   }, [gameState]);
 
-  // Đếm ngược khi đang chơi
   useEffect(() => {
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -35,14 +32,12 @@ function App() {
     }
   }, [gameState, timeLeft]);
 
-  // Bắt đầu game
   const startGame = () => {
     setGameState('playing');
     setTimeLeft(10);
     generateNextLevel(currentNumber);
   };
 
-  // Tạo các lựa chọn cho level
   const generateNextLevel = (prevNumber) => {
     const newOptions = [
       prevNumber,
@@ -50,7 +45,6 @@ function App() {
       generateRandomNumber(),
       generateRandomNumber()
     ];
-    // Xáo trộn mảng
     for (let i = newOptions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newOptions[i], newOptions[j]] = [newOptions[j], newOptions[i]];
@@ -59,15 +53,13 @@ function App() {
     setNextNumber(generateRandomNumber());
   };
 
-  // Xử lý khi người chơi chọn
   const handleChoice = (choice) => {
     if (choice === currentNumber) {
       const newLevel = level + 1;
       setLevel(newLevel);
       setCurrentNumber(nextNumber);
-      setTimeLeft(10); // Reset thời gian
+      setTimeLeft(10);
       generateNextLevel(nextNumber);
-      // Cập nhật high score
       if (newLevel > highScore) {
         setHighScore(newLevel);
         localStorage.setItem('highScore', newLevel);
@@ -77,7 +69,6 @@ function App() {
     }
   };
 
-  // Reset game
   const resetGame = () => {
     setGameState('initial');
     setLevel(1);
@@ -107,6 +98,11 @@ function App() {
           <h1>Level {level}</h1>
           <h3>Điểm cao nhất: {highScore}</h3>
           <div className="timer">Thời gian: {timeLeft}s</div>
+          <div className="next-number">
+            <h3>Số cần nhớ:</h3>
+            <div className="memory-box animate-pop-in">{nextNumber}</div>
+          </div>
+          <hr className="divider" />
           <h3>Chọn số đã xuất hiện ở màn trước:</h3>
           <div className="options-grid">
             {options.map((option, index) => (
@@ -118,9 +114,6 @@ function App() {
                 {option}
               </button>
             ))}
-          </div>
-          <div className="next-number">
-            <h3>Số tiếp theo cần nhớ: <span className="highlight">{nextNumber}</span></h3>
           </div>
         </div>
       )}
